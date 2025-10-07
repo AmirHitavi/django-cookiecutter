@@ -1,0 +1,116 @@
+services:
+
+  db:
+    container_name: db
+    image: postgres:15
+    restart: always
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+
+  redis:
+    container_name: redis
+    image: redis:7-alpine
+    restart: always
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+
+  api:
+    build:
+      context: .
+      dockerfile: ./docker/local/django/Dockerfile
+    image: {{ cookiecutter.project_slug }}
+    container_name: api
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - .:/src
+    ports:
+      - "8000:8000"
+    command: /start.sh
+    depends_on:
+      - redis
+      - db
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+
+  worker:
+    image: {{ cookiecutter.project_slug }}
+    container_name: worker
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - .:/src
+    command: /worker.sh
+    depends_on:
+      - redis
+      - db
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+
+  flower:
+    image: {{ cookiecutter.project_slug }}
+    container_name: flower
+    env_file:
+      - .env
+    volumes:
+      - .:/src
+    command: /flower.sh
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - db
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+
+  beat:
+    image: {{ cookiecutter.project_slug }}
+    container_name: beat
+    env_file:
+      - .env
+    volumes:
+      - .:/src
+    command: /beat.sh
+    depends_on:
+      - redis
+      - db
+      - api
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+
+  smtp4dev:
+    image: rnwood/smtp4dev
+    container_name: smtp4dev
+    restart: always
+    ports:
+      - "5000:80"
+      - "2525:25"
+      - "110:110"
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+
+networks:
+  {{ cookiecutter.project_slug }}_network:
+    driver: bridge
+
+volumes:
+  db_data:

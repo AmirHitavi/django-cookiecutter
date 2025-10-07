@@ -1,0 +1,22 @@
+{
+    "project_name": "My Django Project",
+    "project_slug": "{{ cookiecutter.project_name.lower()|replace(' ', '_')|replace('-', '_')|replace('.', '_')|trim() }}",
+    "description": "{{ cookiecutter.project_slug }} description",
+    "author_name": "Amir Hitavi",
+    
+    "postgres_db": "{{ cookiecutter.project_slug }}_db",
+    "postgres_user": "user",
+    "postgres_password":"password",
+
+    "pgadmin_email": "pgadmin@gmail.com",
+    "pgadmin_password": "PGpassword",
+    
+    "flower_user": "user",
+    "flower_password": "password",
+
+    "use_drf": "y",
+    "use_simple_jwt": "y",
+    "use_celery": "y",
+    "use_beat": "y",
+    "use_cache": "y"
+}
