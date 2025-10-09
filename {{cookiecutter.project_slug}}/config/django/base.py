@@ -154,7 +154,7 @@ from config.settings.beat import *  # noqa
 from config.settings.celery import *  # noqa
 {% endif %}
 
-{% if cookiecutter.use_simple_jwt == "y" %}
+{% if cookiecutter.use_simple_jwt == "y" and cookiecutter.use_jwt == 'y' %}
 from config.settings.jwt import *  # noqa
 {% endif %}
 
