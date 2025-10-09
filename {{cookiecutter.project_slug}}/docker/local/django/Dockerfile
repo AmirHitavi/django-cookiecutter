@@ -40,6 +40,7 @@ COPY ./docker/local/django/start.sh /start.sh
 RUN sed -i 's/\r$//g' /start.sh
 RUN chmod +x /start.sh
 
+{% if cookiecutter.use_celery == 'y' %}
 COPY ./docker/local/django/celery/worker/start.sh /worker.sh
 RUN sed -i 's/\r$//g' /worker.sh
 RUN chmod +x /worker.sh
@@ -47,10 +48,13 @@ RUN chmod +x /worker.sh
 COPY ./docker/local/django/celery/flower/start.sh /flower.sh
 RUN sed -i 's/\r$//g' /flower.sh
 RUN chmod +x /flower.sh
+{% endif %}
 
+{% if cookiecutter.use_celery == 'y' and cookiecutter.use_beat == 'y' %}
 COPY ./docker/local/django/celery/beat/start.sh /beat.sh
 RUN sed -i 's/\r$//g' /beat.sh
 RUN chmod +x /beat.sh
+{% endif %}
 
 COPY . ${APP_HOME}
 

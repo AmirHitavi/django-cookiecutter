@@ -18,9 +18,6 @@ THIRD_PARTY_APPS = [
     "django_celery_beat",
 {%- endif %}
 
-{%- if cookiecutter.use_celery == 'y' and cookiecutter.use_beat == 'y'  %}
-{%- endif %}
-
 {%- if cookiecutter.use_drf == "y" %}
     "rest_framework",
     "corsheaders",

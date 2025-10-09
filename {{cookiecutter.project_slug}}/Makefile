@@ -17,7 +17,7 @@ production:
 	pip install -r ./requirements/production.txt
 
 build:
-	docker compose -f local.docker-compose.yaml up --build -d
+	docker compose -f local.docker-compose.yaml build
 
 up:
 	docker compose -f local.docker-compose.yaml up 
@@ -39,15 +39,18 @@ api-logs:
 
 db-logs:
 	docker compose -f local.docker-compose.yaml logs db
-
+{% if cookiecutter.use_celery == "y" %}
 worker-logs:
 	docker compose -f local.docker-compose.yaml logs worker
 
 flower-logs:
 	docker compose -f local.docker-compose.yaml logs flower
+{% endif %}
 
+{% if cookiecutter.use_celery == "y"  and cookiecutter.use_beat == "y" %}
 beat-logs:
 	docker compose -f local.docker-compose.yaml logs beat
+{% endif %}
 
 status:
 	docker ps

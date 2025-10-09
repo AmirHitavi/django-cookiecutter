@@ -23,13 +23,14 @@ services:
       - db
     networks:
       - {{ cookiecutter.project_slug }}_network
-
+  {% if cookiecutter.use_celery == 'y' or cookiecutter.use_beat == 'y' or cookiecutter.use_cache == 'y' %}
   redis:
     container_name: redis
     image: redis:7-alpine
     restart: always
     networks:
       - {{ cookiecutter.project_slug }}_network
+  {% endif %}
 
   api:
     build:
@@ -46,11 +47,14 @@ services:
       - "8000:8000"
     command: /start.sh
     depends_on:
+      { % if cookiecutter.use_celery == 'y' or cookiecutter.use_beat == 'y' or cookiecutter.use_cache == 'y' % }
       - redis
+      {% endif %}
       - db
     networks:
       - {{ cookiecutter.project_slug }}_network
 
+  { % if cookiecutter.use_celery == 'y' % }
   worker:
     image: {{ cookiecutter.project_slug }}
     container_name: worker
@@ -81,7 +85,9 @@ services:
       - db
     networks:
       - {{ cookiecutter.project_slug }}_network
-
+  {% endif %}
+  
+  {% if cookiecutter.use_celery == 'y' and cookiecutter.use_beat == 'y' %}
   beat:
     image: {{ cookiecutter.project_slug }}
     container_name: beat
@@ -96,6 +102,7 @@ services:
       - api
     networks:
       - {{ cookiecutter.project_slug }}_network
+  {% endif %}
 
   smtp4dev:
     image: rnwood/smtp4dev
