@@ -7,18 +7,18 @@ django-filter==24.3
 {% if cookiecutter.use_drf == "y" %}
 djangorestframework==3.16.1
 django-cors-headers==4.9.0
-drf-spectacular==0.28.0
+drf-spectacular==0.29.0
 drf-nested-routers==0.95.0
 {% endif %}
 
 {% if cookiecutter.use_simple_jwt == 'y' and cookiecutter.use_drf =="y" %}
-djangorestframework-simplejwt==5.2.2
+djangorestframework-simplejwt==5.5.1
 {% endif %}
 
 {% if cookiecutter.use_celery == 'y' %}
 celery==5.5.3
 flower==2.0.1
-redis==6.4.0
+redis==7.0.1
 {% endif %}
 
 {% if cookiecutter.use_celery == 'y' and cookiecutter.use_beat == 'y' %}
@@ -27,7 +27,7 @@ django-celery-beat==2.8.1
 
 {% if cookiecutter.use_cache == 'y' and cookiecutter.use_celery != 'y' %}
 django-redis==6.0.0
-redis==6.4.0
+redis==7.0.1
 {% elif cookiecutter.use_cache == 'y' and cookiecutter.use_celery == 'y' %}
 django-redis==6.0.0
 {% endif %}
