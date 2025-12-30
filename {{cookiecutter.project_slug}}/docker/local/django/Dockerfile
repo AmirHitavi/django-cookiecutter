@@ -8,7 +8,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Set working directory inside the container
 WORKDIR /app
 
-
 # Builder stage for compiling dependencies and wheels
 FROM python-base AS builder
 
@@ -28,7 +27,6 @@ COPY ./requirements /app/requirements
 
 # Build wheels for Python dependencies to optimize installation later
 RUN pip wheel --no-cache-dir -r /app/requirements/${BUILD_ENVIRONMENT}.txt -w /wheels
-
 
 # Runtime stage for running the application
 FROM python-base AS runtime
@@ -52,9 +50,6 @@ RUN mkdir -p /vol/web/static /vol/web/media \
 # Copy pre-built wheels from the builder stage
 COPY --from=builder /wheels /wheels
 
-# Switch to non-root user
-USER django_user
-
 # Install Python dependencies from wheels and remove wheel files to save space
 RUN pip install --no-cache-dir /wheels/*.whl \
     && rm -rf /wheels
@@ -71,7 +66,6 @@ RUN sed -i 's/\r$//g' /start.sh && chmod +x /start.sh
 {% if cookiecutter.use_celery == 'y' %}
 COPY ./docker/local/django/celery/worker/start.sh /worker.sh
 RUN sed -i 's/\r$//g' /worker.sh && chmod +x /worker.sh
-
 COPY ./docker/local/django/celery/flower/start.sh /flower.sh
 RUN sed -i 's/\r$//g' /flower.sh && chmod +x /flower.sh
 {% endif %}
@@ -87,6 +81,10 @@ COPY . ${APP_HOME}
 
 # Ensure the non-root user owns the application code
 RUN chown -R django_user:django_user ${APP_HOME}
+
+# Switch to non-root user
+USER django_user
+
 
 # Set the container entrypoint to the entrypoint script
 ENTRYPOINT ["/entrypoint.sh"]
